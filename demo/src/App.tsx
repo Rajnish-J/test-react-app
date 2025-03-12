@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import PdfViewer from "./pages/pdfviewer/pdfviewer";
+import PdfViewer from "./pages/pdfviewer/PdfViewPage";
 
 const App: React.FC = () => {
   return (
