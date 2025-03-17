@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import PdfViewer from "./pages/pdfviewer/PdfViewPage";
+import Time from "./pages/SWR-Time/timezone";
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,11 @@ const App: React.FC = () => {
                 PDF Viewer
               </button>
             </Link>
+            <Link to="/ViewTime" className="block">
+              <button className="w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                View Time
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -24,6 +30,7 @@ const App: React.FC = () => {
             {/* Default Route (Home Page) */}
             <Route path="/" element={<HomePage />} />
             <Route path="/pdf" element={<PdfViewer />} />
+            <Route path="/ViewTime" element={<Time />} />
             {/* Fallback for Unmatched Routes */}
             <Route path="*" element={<FirstPage />} />
           </Routes>
