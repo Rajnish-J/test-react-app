@@ -1,33 +1,52 @@
-import React from "react";
-import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
+import React, { useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
 
-// Create styles
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: "column",
-    backgroundColor: "#E4E4E4",
-    padding: 20,
-  },
-  section: {
-    margin: 10,
-    padding: 10,
-    backgroundColor: "#ffffff",
-    borderRadius: 5,
-  },
-});
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-// Create Document Component
-const PdfDocument: React.FC = () => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
-        <Text>Welcome to React PDF Renderer</Text>
-      </View>
-      <View style={styles.section}>
-        <Text>This is a sample PDF document generated in React.</Text>
-      </View>
-    </Page>
-  </Document>
-);
+interface PdfViewerProps {
+  file: File | null;
+}
 
-export default PdfDocument;
+const PdfViewer: React.FC<PdfViewerProps> = ({ file }) => {
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
+    setNumPages(numPages);
+  }
+
+  return (
+    <div className="border rounded-lg p-4 shadow-lg">
+      {file ? (
+        <>
+          <Document file={URL.createObjectURL(file)} onLoadSuccess={onDocumentLoadSuccess}>
+            <Page pageNumber={pageNumber} />
+          </Document>
+          <div className="flex justify-between items-center mt-4">
+            <button
+              className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+              disabled={pageNumber <= 1}
+              onClick={() => setPageNumber((prev) => prev - 1)}
+            >
+              Previous
+            </button>
+            <p>
+              Page {pageNumber} of {numPages}
+            </p>
+            <button
+              className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+              disabled={pageNumber >= (numPages || 1)}
+              onClick={() => setPageNumber((prev) => prev + 1)}
+            >
+              Next
+            </button>
+          </div>
+        </>
+      ) : (
+        <p className="text-gray-500 text-center">Please upload a PDF to view</p>
+      )}
+    </div>
+  );
+};
+
+export default PdfViewer;
