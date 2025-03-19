@@ -1,22 +1,29 @@
-import React, { useState } from "react";
-import PdfViewer from "../../components/PDF/PdfDocument";
+import { useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
 
-const PdfViewPage: React.FC = () => {
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+
+const MyApp: React.FC = () => {
+  const [numPages, setNumPages] = useState<number | null>(null);
+
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
+    setNumPages(numPages);
+  }
 
   return (
-    <div className="p-6 flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-6">PDF Viewer with Upload</h1>
-
-      <div className="mt-6 w-full max-w-3xl">
-        {pdfFile ? (
-          <PdfViewer file={pdfFile} />
-        ) : (
-          <p className="text-gray-500 text-center">No PDF selected</p>
-        )}
-      </div>
+    <div className="p-6 flex justify-center space-x-10">
+      <h1 className="text-2xl font-bold mb-4">PDF Viewer</h1>
+      <Document file="/Dental Select - Dental and Vision.pdf" onLoadSuccess={onDocumentLoadSuccess} className={"border-[3px] border-gray-200 rounded-xl"}>
+        {numPages &&
+          Array.from({ length: numPages }, (_, index) => (
+            <Page key={index} pageNumber={index + 1} className="mb-4" />
+          ))}
+      </Document>
+      <p className="text-gray-600">
+        Total Pages: {numPages}
+      </p>
     </div>
   );
 };
 
-export default PdfViewPage;
+export default MyApp;
